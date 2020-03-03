@@ -7,10 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://git.code.sf.net/p/sbcl/sbcl
-          ref: master
+        run: |
+          git clone -b master https://git.code.sf.net/p/sbcl/sbcl .
+
 
       - name: freestyle.shell
         run: |
@@ -75,10 +74,9 @@ jobs:
     needs: [quicklisp_current,sbcl_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://gitlab.common-lisp.net/xcvb/cl-launch.git
-          ref: master
+        run: |
+          git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
+
 
       - name: freestyle.shell
         run: |
@@ -122,10 +120,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/architecture.service-provider.git
-          ref: master
+        run: |
+          git clone -b master https://github.com/scymtym/architecture.service-provider.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -158,10 +155,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/architecture.builder-protocol.git
-          ref: master
+        run: |
+          git clone -b master https://github.com/scymtym/architecture.builder-protocol.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -194,10 +190,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/model.transform.trace.git
-          ref: future
+        run: |
+          git clone -b future https://github.com/scymtym/model.transform.trace.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -230,10 +225,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-architecture_builder-protocol_master,cl-model_transform_trace_future]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/text.source-location.git
-          ref: future
+        run: |
+          git clone -b future https://github.com/scymtym/text.source-location.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -266,10 +260,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-parser_ini_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/configuration.options.git
-          ref: master
+        run: |
+          git clone -b master https://github.com/scymtym/configuration.options.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -302,10 +295,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/parser.ini.git
-          ref: master
+        run: |
+          git clone -b master https://github.com/scymtym/parser.ini.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -338,10 +330,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://github.com/scymtym/language.yaml.git
-          ref: future
+        run: |
+          git clone -b future https://github.com/scymtym/language.yaml.git .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -374,10 +365,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://code.cor-lab.de/git/rosetta.git.cl
-          ref: master
+        run: |
+          git clone -b master https://code.cor-lab.de/git/rosetta.git.cl .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -410,10 +400,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master,rosetta-cl_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://code.cor-lab.de/git/rosetta.git.project-cl
-          ref: master
+        run: |
+          git clone -b master https://code.cor-lab.de/git/rosetta.git.project-cl .
+
 
       - name: common-lisp-executable.shell
         run: |
@@ -446,10 +435,9 @@ jobs:
     needs: [cl-launch_master,quicklisp_current,cl-configuration_options_master,cl-language_yaml_future,cl-text_source-location_future,rosetta-cl_master,rosetta-project-cl_master]
     steps:
       - name: git.repository
-        uses: actions/checkout@v2
-        with:
-          repository: https://code.cor-lab.de/git/build-generator
-          ref: master
+        run: |
+          git clone -b master https://code.cor-lab.de/git/build-generator .
+
 
       - name: common-lisp-executable.shell
         run: |
