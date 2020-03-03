@@ -8,9 +8,9 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 zlib1g-dev time make sbcl gcc git
 
 
@@ -46,9 +46,9 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 curl
 
 
@@ -93,9 +93,9 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 git tar make
 
 
@@ -463,9 +463,9 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
-              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+          DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 git file unzip unp libssl1.0.0
 
 
