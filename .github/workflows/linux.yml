@@ -9,7 +9,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount zlib1g-dev time make sbcl gcc git
 
@@ -43,7 +42,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount curl
 
@@ -93,7 +91,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar make
 
@@ -148,7 +145,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -197,7 +193,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -246,7 +241,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -295,7 +289,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -344,7 +337,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -393,7 +385,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -442,7 +433,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -491,7 +481,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -540,7 +529,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
 
@@ -589,7 +577,6 @@ jobs:
       - name: install-platform-dependencies
         run: |
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
-          #   && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes upgrade \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount tar git file unzip unp libssl1.0.0
 
