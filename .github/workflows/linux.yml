@@ -19,6 +19,17 @@ jobs:
           git clone -b master https://git.code.sf.net/p/sbcl/sbcl .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv sbcl.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: freestyle.shell
         run: |
 
@@ -47,6 +58,17 @@ jobs:
 
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv quicklisp-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: freestyle.shell
         run: |
           if ! [ -f "${WORKSPACE}/install//share/common-lisp/quicklisp/setup.lisp" ] ; then
@@ -101,6 +123,17 @@ jobs:
           git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-launch-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: freestyle.shell
         run: |
           mkdir -p "${WORKSPACE}/install/"/etc
@@ -155,6 +188,17 @@ jobs:
           git clone -b master https://github.com/scymtym/architecture.service-provider.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-architecture.service-provider-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -203,6 +247,17 @@ jobs:
           git clone -b master https://github.com/scymtym/architecture.builder-protocol.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-architecture.builder-protocol-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -251,6 +306,17 @@ jobs:
           git clone -b future https://github.com/scymtym/model.transform.trace.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-model.transform.trace-future.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -299,6 +365,17 @@ jobs:
           git clone -b future https://github.com/scymtym/text.source-location.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-text.source-location-future.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -347,6 +424,17 @@ jobs:
           git clone -b master https://github.com/scymtym/configuration.options.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-configuration.options-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -395,6 +483,17 @@ jobs:
           git clone -b master https://github.com/scymtym/parser.ini.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-parser.ini-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -443,6 +542,17 @@ jobs:
           git clone -b future https://github.com/scymtym/language.yaml.git .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv cl-language.yaml-future.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -491,6 +601,17 @@ jobs:
           git clone -b master https://code.cor-lab.de/git/rosetta.git.cl .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv rosetta-cl-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -539,6 +660,17 @@ jobs:
           git clone -b master https://code.cor-lab.de/git/rosetta.git.project-cl .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv rosetta-project-cl-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -587,6 +719,17 @@ jobs:
           git clone -b master https://code.cor-lab.de/git/build-generator .
 
 
+      - name: gather-artifacts
+        run: |
+          mkdir -p artifacts
+                                                          mv build-generator-master.tar.gz, build-generator-master-install.tar.gz, install/bin/build-generator artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+        
+                            name: artifacts
+                            path: artifacts
       - name: common-lisp-executable.shell
         run: |
           # Get precise version from git and write into version-string.sexp
