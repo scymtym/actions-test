@@ -6,6 +6,15 @@ jobs:
   sbcl_master:
     runs-on: ubuntu-latest
     steps:
+      - name: install-platform-dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+                zlib1g-dev time make sbcl gcc git
+
+
+
       - name: git.repository
         run: |
           git clone -b master https://git.code.sf.net/p/sbcl/sbcl .
@@ -35,6 +44,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [sbcl_master]
     steps:
+      - name: install-platform-dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+                curl
+
+
+
       - name: freestyle.shell
         run: |
           if ! [ -f "/tmp//build-generator-nightly/share/common-lisp/quicklisp/setup.lisp" ] ; then
@@ -73,6 +91,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [quicklisp_current,sbcl_master]
     steps:
+      - name: install-platform-dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+                git tar make
+
+
+
       - name: git.repository
         run: |
           git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
@@ -434,6 +461,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cl-launch_master,quicklisp_current,cl-configuration_options_master,cl-language_yaml_future,cl-text_source-location_future,rosetta-cl_master,rosetta-project-cl_master]
     steps:
+      - name: install-platform-dependencies
+        run: |
+          DEBIAN_FRONTEND=noninteractive apt-get -qq update \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes upgrade \
+              && DEBIAN_FRONTEND=noninteractive apt-get -qq --assume-yes install \
+                git file unzip unp libssl1.0.0
+
+
+
       - name: git.repository
         run: |
           git clone -b master https://code.cor-lab.de/git/build-generator .
