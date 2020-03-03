@@ -1181,7 +1181,7 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           mkdir -p artifacts
-          mv build-generator-master.tar.gz, build-generator-master-install.tar.gz, install/bin/build-generator artifacts/
+          mv build-generator-master.tar.gz  build-generator-master-install.tar.gz  install/bin/build-generator artifacts/
 
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
