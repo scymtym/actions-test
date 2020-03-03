@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: sbcl@master
                             path: artifacts
 
   quicklisp_current:
@@ -114,7 +114,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: quicklisp@current
                             path: artifacts
 
   cl-launch_master:
@@ -196,7 +196,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-launch@master
                             path: artifacts
 
   cl-architecture_service-provider_master:
@@ -278,7 +278,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-architecture.service-provider@master
                             path: artifacts
 
   cl-architecture_builder-protocol_master:
@@ -360,7 +360,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-architecture.builder-protocol@master
                             path: artifacts
 
   cl-model_transform_trace_future:
@@ -442,7 +442,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-model.transform.trace@future
                             path: artifacts
 
   cl-text_source-location_future:
@@ -542,7 +542,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-text.source-location@future
                             path: artifacts
 
   cl-configuration_options_master:
@@ -642,7 +642,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-configuration.options@master
                             path: artifacts
 
   cl-parser_ini_master:
@@ -730,7 +730,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-parser.ini@master
                             path: artifacts
 
   cl-language_yaml_future:
@@ -818,7 +818,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: cl-language.yaml@future
                             path: artifacts
 
   rosetta-cl_master:
@@ -912,7 +912,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: rosetta-cl@master
                             path: artifacts
 
   rosetta-project-cl_master:
@@ -1012,7 +1012,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: rosetta-project-cl@master
                             path: artifacts
 
   build-generator_master:
@@ -1179,7 +1179,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
         
-                            name: artifacts
+                            name: build-generator@master
                             path: artifacts
 
   
