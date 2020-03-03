@@ -42,9 +42,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: artifacts
+          name: sbcl@master
+          path: artifacts
 
   quicklisp_current:
     runs-on: ubuntu-latest
@@ -61,9 +60,8 @@ jobs:
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -113,9 +111,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: artifacts
+          name: quicklisp@current
+          path: artifacts
 
   cl-launch_master:
     runs-on: ubuntu-latest
@@ -137,15 +134,13 @@ jobs:
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -195,9 +190,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: artifacts
+          name: cl-launch@master
+          path: artifacts
 
   cl-architecture_service-provider_master:
     runs-on: ubuntu-latest
@@ -219,21 +213,18 @@ jobs:
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -277,9 +268,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: artifacts
+          name: cl-architecture.service-provider@master
+          path: artifacts
 
   cl-architecture_builder-protocol_master:
     runs-on: ubuntu-latest
@@ -301,21 +291,18 @@ jobs:
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -359,9 +346,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: artifacts
+          name: cl-architecture.builder-protocol@master
+          path: artifacts
 
   cl-model_transform_trace_future:
     runs-on: ubuntu-latest
@@ -383,21 +369,18 @@ jobs:
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -441,9 +424,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-model.transform.trace@future
-                            path: artifacts
+          name: cl-model.transform.trace@future
+          path: artifacts
 
   cl-text_source-location_future:
     runs-on: ubuntu-latest
@@ -465,39 +447,33 @@ jobs:
       - name: download-from-cl-model.transform.trace@future
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-model.transform.trace@future
-                            path: upstream-dir
+          name: cl-model.transform.trace@future
+          path: upstream-dir
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-cl-architecture.service-provider@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: upstream-dir
+          name: cl-architecture.service-provider@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -541,9 +517,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-text.source-location@future
-                            path: artifacts
+          name: cl-text.source-location@future
+          path: artifacts
 
   cl-configuration_options_master:
     runs-on: ubuntu-latest
@@ -565,39 +540,33 @@ jobs:
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-cl-parser.ini@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-parser.ini@master
-                            path: upstream-dir
+          name: cl-parser.ini@master
+          path: upstream-dir
       - name: download-from-cl-architecture.service-provider@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: upstream-dir
+          name: cl-architecture.service-provider@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -641,9 +610,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-configuration.options@master
-                            path: artifacts
+          name: cl-configuration.options@master
+          path: artifacts
 
   cl-parser_ini_master:
     runs-on: ubuntu-latest
@@ -665,27 +633,23 @@ jobs:
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -729,9 +693,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-parser.ini@master
-                            path: artifacts
+          name: cl-parser.ini@master
+          path: artifacts
 
   cl-language_yaml_future:
     runs-on: ubuntu-latest
@@ -753,27 +716,23 @@ jobs:
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -817,9 +776,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: cl-language.yaml@future
-                            path: artifacts
+          name: cl-language.yaml@future
+          path: artifacts
 
   rosetta-cl_master:
     runs-on: ubuntu-latest
@@ -841,33 +799,28 @@ jobs:
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-cl-architecture.service-provider@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: upstream-dir
+          name: cl-architecture.service-provider@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -911,9 +864,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: rosetta-cl@master
-                            path: artifacts
+          name: rosetta-cl@master
+          path: artifacts
 
   rosetta-project-cl_master:
     runs-on: ubuntu-latest
@@ -935,39 +887,33 @@ jobs:
       - name: download-from-cl-architecture.service-provider@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: upstream-dir
+          name: cl-architecture.service-provider@master
+          path: upstream-dir
       - name: download-from-rosetta-cl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: rosetta-cl@master
-                            path: upstream-dir
+          name: rosetta-cl@master
+          path: upstream-dir
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -1011,9 +957,8 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: rosetta-project-cl@master
-                            path: artifacts
+          name: rosetta-project-cl@master
+          path: artifacts
 
   build-generator_master:
     runs-on: ubuntu-latest
@@ -1035,75 +980,63 @@ jobs:
       - name: download-from-rosetta-project-cl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: rosetta-project-cl@master
-                            path: upstream-dir
+          name: rosetta-project-cl@master
+          path: upstream-dir
       - name: download-from-rosetta-cl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: rosetta-cl@master
-                            path: upstream-dir
+          name: rosetta-cl@master
+          path: upstream-dir
       - name: download-from-cl-model.transform.trace@future
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-model.transform.trace@future
-                            path: upstream-dir
+          name: cl-model.transform.trace@future
+          path: upstream-dir
       - name: download-from-cl-text.source-location@future
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-text.source-location@future
-                            path: upstream-dir
+          name: cl-text.source-location@future
+          path: upstream-dir
       - name: download-from-cl-language.yaml@future
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-language.yaml@future
-                            path: upstream-dir
+          name: cl-language.yaml@future
+          path: upstream-dir
       - name: download-from-cl-architecture.builder-protocol@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.builder-protocol@master
-                            path: upstream-dir
+          name: cl-architecture.builder-protocol@master
+          path: upstream-dir
       - name: download-from-cl-parser.ini@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-parser.ini@master
-                            path: upstream-dir
+          name: cl-parser.ini@master
+          path: upstream-dir
       - name: download-from-cl-architecture.service-provider@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-architecture.service-provider@master
-                            path: upstream-dir
+          name: cl-architecture.service-provider@master
+          path: upstream-dir
       - name: download-from-cl-configuration.options@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-configuration.options@master
-                            path: upstream-dir
+          name: cl-configuration.options@master
+          path: upstream-dir
       - name: download-from-sbcl@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: sbcl@master
-                            path: upstream-dir
+          name: sbcl@master
+          path: upstream-dir
       - name: download-from-quicklisp@current
         uses: actions/download-artifact@v1
         with:
-        
-                            name: quicklisp@current
-                            path: upstream-dir
+          name: quicklisp@current
+          path: upstream-dir
       - name: download-from-cl-launch@master
         uses: actions/download-artifact@v1
         with:
-        
-                            name: cl-launch@master
-                            path: upstream-dir
+          name: cl-launch@master
+          path: upstream-dir
       - name: extract-upstream-artiacts
         run: |
           cd upstream
@@ -1178,8 +1111,7 @@ jobs:
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
         with:
-        
-                            name: build-generator@master
-                            path: artifacts
+          name: build-generator@master
+          path: artifacts
 
   
