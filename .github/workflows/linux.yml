@@ -13,7 +13,7 @@ jobs:
           ref: master
 
       - name: freestyle.shell
-        command: |
+        run: |
 
           sh make.sh \
             --xc-host="sbcl --no-sysinit --no-userinit" \
@@ -26,7 +26,7 @@ jobs:
 
 
       - name: deployment-test.shell
-        command: |
+        run: |
           /tmp//build-generator-nightly/bin/sbcl --version
           /tmp//build-generator-nightly/bin/sbcl --noinform --disable-debugger --no-userinit --eval '(require :sb-sprof)' --quit
 
@@ -37,7 +37,7 @@ jobs:
     needs: [sbcl@master]
     steps:
       - name: freestyle.shell
-        command: |
+        run: |
           if ! [ -f "/tmp//build-generator-nightly/share/common-lisp/quicklisp/setup.lisp" ] ; then
             # Download Quicklisp installer
             curl -O https://beta.quicklisp.org/quicklisp.lisp
@@ -81,7 +81,7 @@ jobs:
           ref: master
 
       - name: freestyle.shell
-        command: |
+        run: |
           mkdir -p "/tmp//build-generator-nightly"/etc
           mkdir -p "/tmp//build-generator-nightly"/bin
 
@@ -111,7 +111,7 @@ jobs:
 
 
       - name: deployment-test.shell
-        command: |
+        run: |
           "/tmp//build-generator-nightly/bin/cl-launch" --version
           "/tmp//build-generator-nightly/bin/cl-launch" -s cl-launch/dispatch
 
@@ -128,7 +128,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.service-provider.master"
           tar --exclude .git --exclude .svn -c . \
@@ -164,7 +164,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.builder-protocol.master"
           tar --exclude .git --exclude .svn -c . \
@@ -200,7 +200,7 @@ jobs:
           ref: future
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-model.transform.trace.future"
           tar --exclude .git --exclude .svn -c . \
@@ -236,7 +236,7 @@ jobs:
           ref: future
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-text.source-location.future"
           tar --exclude .git --exclude .svn -c . \
@@ -272,7 +272,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-configuration.options.master"
           tar --exclude .git --exclude .svn -c . \
@@ -308,7 +308,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-parser.ini.master"
           tar --exclude .git --exclude .svn -c . \
@@ -344,7 +344,7 @@ jobs:
           ref: future
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-language.yaml.future"
           tar --exclude .git --exclude .svn -c . \
@@ -380,7 +380,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-cl.master"
           tar --exclude .git --exclude .svn -c . \
@@ -416,7 +416,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Archive source
           mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-project-cl.master"
           tar --exclude .git --exclude .svn -c . \
@@ -452,7 +452,7 @@ jobs:
           ref: master
 
       - name: common-lisp-executable.shell
-        command: |
+        run: |
           # Get precise version from git and write into version-string.sexp
           tag='release-*'
           git describe --long --dirty=-dirty --tags --match "${tag}"                              \
@@ -486,7 +486,7 @@ jobs:
 
 
       - name: deployment-test.shell
-        command: |
+        run: |
           BUILD_GENERATOR_CONFIG_FILES=%pwd /tmp//build-generator-nightly/bin/build-generator version --changelog=1
 
 
