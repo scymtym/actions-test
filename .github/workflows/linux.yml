@@ -1,0 +1,494 @@
+name: linux
+
+on: [push]
+
+jobs:
+  sbcl@master:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://git.code.sf.net/p/sbcl/sbcl
+          ref: master
+
+      - name: freestyle.shell
+        command: |
+
+          sh make.sh \
+            --xc-host="sbcl --no-sysinit --no-userinit" \
+            --fancy \
+            --prefix=/tmp//build-generator-nightly \
+
+
+
+          sh install.sh
+
+
+      - name: deployment-test.shell
+        command: |
+          /tmp//build-generator-nightly/bin/sbcl --version
+          /tmp//build-generator-nightly/bin/sbcl --noinform --disable-debugger --no-userinit --eval '(require :sb-sprof)' --quit
+
+
+
+  quicklisp@current:
+    runs-on: ubuntu-latest
+    needs: [sbcl@master]
+    steps:
+      - name: freestyle.shell
+        command: |
+          if ! [ -f "/tmp//build-generator-nightly/share/common-lisp/quicklisp/setup.lisp" ] ; then
+            # Download Quicklisp installer
+            curl -O https://beta.quicklisp.org/quicklisp.lisp
+
+            # Execute installation
+            SBCL_HOME=/tmp//build-generator-nightly/bin/../lib/sbcl /tmp//build-generator-nightly/bin/sbcl \
+            --core /tmp//build-generator-nightly/bin/../lib/sbcl/sbcl.core                 \
+            --noinform --no-userinit --disable-debugger                                    \
+              --load quicklisp.lisp                            \
+              --eval '(quicklisp-quickstart:install
+
+                       :path "'"/tmp//build-generator-nightly/share/common-lisp/quicklisp"'/")' \
+              --quit
+          else
+            (
+              flock 9
+              SBCL_HOME=/tmp//build-generator-nightly/bin/../lib/sbcl /tmp//build-generator-nightly/bin/sbcl \
+            --core /tmp//build-generator-nightly/bin/../lib/sbcl/sbcl.core                 \
+            --noinform --no-userinit --disable-debugger                              \
+                --load "/tmp//build-generator-nightly/share/common-lisp/quicklisp/setup.lisp"                     \
+                --eval '(ql:update-client :prompt nil)'    \
+                --eval '(ql:update-all-dists :prompt nil)' \
+                --quit
+            ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+          fi
+
+          # Fixup permissions
+          chmod -R g+rwX "/tmp//build-generator-nightly/share/common-lisp/quicklisp"
+
+
+
+  cl-launch@master:
+    runs-on: ubuntu-latest
+    needs: [quicklisp@current,sbcl@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://gitlab.common-lisp.net/xcvb/cl-launch.git
+          ref: master
+
+      - name: freestyle.shell
+        command: |
+          mkdir -p "/tmp//build-generator-nightly"/etc
+          mkdir -p "/tmp//build-generator-nightly"/bin
+
+          ./cl-launch.sh                      \
+            --include "/tmp//build-generator-nightly/share/common-lisp/source/cl-launch/" \
+            --rc                              \
+            --quicklisp                       \
+            --output "/tmp//build-generator-nightly/bin/cl-launch" \
+            -B install                        \
+            > /dev/null
+
+          sed -i -e 's#try_resource_file /etc/cl-launchrc#try_resource_file "/tmp//build-generator-nightly"/etc/cl-launchrc#;s#try_resource_file "\$HOME/\.cl-launchrc"##;s#(try (subpathname (user-homedir-pathname) "quicklisp/setup.lisp"))#(try (merge-pathnames "../share/common-lisp/quicklisp/setup.lisp" (load-time-value *load-pathname*)))\
+          (try (subpathname (user-homedir-pathname) "quicklisp/setup.lisp"))#;' "/tmp//build-generator-nightly/bin/cl-launch"
+
+          cp dispatch.lisp "/tmp//build-generator-nightly/share/common-lisp/source/cl-launch//"
+          chmod 644 "/tmp//build-generator-nightly/share/common-lisp/source/cl-launch//dispatch.lisp"
+
+          cat  > "/tmp//build-generator-nightly/etc/cl-launchrc" <<"EOF"
+          SBCL=${SBCL:-"/tmp//build-generator-nightly/bin/sbcl"}
+          SBCL_OPTIONS=${SBCL_OPTIONS:-"--noinform --no-userinit"}
+
+          LISPS=sbcl
+
+          SOURCE_REGISTRY=${SOURCE_REGISTRY:-"/tmp//build-generator-nightly/share/common-lisp/source//"}
+
+          EOF
+
+
+      - name: deployment-test.shell
+        command: |
+          "/tmp//build-generator-nightly/bin/cl-launch" --version
+          "/tmp//build-generator-nightly/bin/cl-launch" -s cl-launch/dispatch
+
+
+
+  cl-architecture.service-provider@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/architecture.service-provider.git
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.service-provider.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.service-provider.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s architecture.service-provider -s architecture.service-provider-and-hooks
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-architecture.builder-protocol@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/architecture.builder-protocol.git
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.builder-protocol.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-architecture.builder-protocol.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s architecture.builder-protocol -s architecture.builder-protocol.json -s architecture.builder-protocol.universal-builder -s architecture.builder-protocol.xpath
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-model.transform.trace@future:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/model.transform.trace.git
+          ref: future
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-model.transform.trace.future"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-model.transform.trace.future" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s model.transform.trace -s model.transform.trace.graph
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-text.source-location@future:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.service-provider@master,cl-architecture.builder-protocol@master,cl-model.transform.trace@future]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/text.source-location.git
+          ref: future
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-text.source-location.future"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-text.source-location.future" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s text.source-location -s text.source-location.lookup -s text.source-location.print -s text.source-location.source-tracking-builder
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-configuration.options@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.service-provider@master,cl-parser.ini@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/configuration.options.git
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-configuration.options.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-configuration.options.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s configuration.options -s configuration.options-syntax-xml -s configuration.options-syntax-ini -s configuration.options-source-commandline -s configuration.options-and-quri -s configuration.options-and-puri -s configuration.options-and-mop -s configuration.options-and-service-provider
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-parser.ini@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.builder-protocol@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/parser.ini.git
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-parser.ini.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-parser.ini.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s parser.ini
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  cl-language.yaml@future:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.builder-protocol@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://github.com/scymtym/language.yaml.git
+          ref: future
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/cl-language.yaml.future"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/cl-language.yaml.future" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s language.yaml.base -s language.yaml.parser -s language.yaml.tags -s language.yaml.construct -s language.yaml
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  rosetta-cl@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.service-provider@master,cl-architecture.builder-protocol@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://code.cor-lab.de/git/rosetta.git.cl
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-cl.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-cl.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s rosetta
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  rosetta-project-cl@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-architecture.builder-protocol@master,rosetta-cl@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://code.cor-lab.de/git/rosetta.git.project-cl
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Archive source
+          mkdir -p "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-project-cl.master"
+          tar --exclude .git --exclude .svn -c . \
+            | ( cd "/tmp//build-generator-nightly/share/common-lisp/source/rosetta-project-cl.master" ; tar -x )
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Load system(s)
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="  ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                     (:tree \""$(pwd)"\")                                       \
+                     (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")      \
+                     :ignore-inherited-configuration)"                           \
+              -s rosetta-project
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+
+
+  build-generator@master:
+    runs-on: ubuntu-latest
+    needs: [cl-launch@master,quicklisp@current,cl-configuration.options@master,cl-language.yaml@future,cl-text.source-location@future,rosetta-cl@master,rosetta-project-cl@master]
+    steps:
+      - name: git.repository
+        uses: actions/checkout@v2
+        with:
+          repository: https://code.cor-lab.de/git/build-generator
+          ref: master
+
+      - name: common-lisp-executable.shell
+        command: |
+          # Get precise version from git and write into version-string.sexp
+          tag='release-*'
+          git describe --long --dirty=-dirty --tags --match "${tag}"                              \
+            | sed -re 's/release-([0-9])+\.([0-9]+)-([0-9]+)-(.*)/echo "\\"\1.$((\2 + 1)).\3\\""/' \
+            | sh                                                                                   \
+            > version-string.sexp
+
+          # Set up environment
+          export "ASDF_OUTPUT_TRANSLATIONS=(:output-translations (t (\"/tmp//build-generator-nightly/var/cache/common-lisp/\" :implementation)) :ignore-inherited-configuration)"
+          export "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/tmp//build-generator-nightly/lib"
+
+
+          # Build binary
+          (
+            flock 9
+            /tmp//build-generator-nightly/bin/cl-launch                                      \
+              --wrap 'SBCL_OPTIONS="--dynamic-space-size 4Gb ${SBCL_OPTIONS}"' \
+              -S "(:source-registry                                              \
+                    (:tree \""$(pwd)"\")                                        \
+                    (:tree \"/tmp//build-generator-nightly/share/common-lisp/source\")       \
+                    :ignore-inherited-configuration)"                            \
+              -s build-generator.commandline-interface              \
+              --dump ! --output "build-generator"                            \
+               -r "build-generator.commandline-interface:main"                                       \
+
+          ) 9> "/tmp//build-generator-nightly/share/common-lisp/quicklisp/lock"
+
+          # Install binary
+          cp "build-generator" /tmp//build-generator-nightly/bin/
+
+
+
+      - name: deployment-test.shell
+        command: |
+          BUILD_GENERATOR_CONFIG_FILES=%pwd /tmp//build-generator-nightly/bin/build-generator version --changelog=1
+
+
+
+  
