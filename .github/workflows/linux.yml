@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount zlib1g-dev time make sbcl gcc git
@@ -17,13 +17,13 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://git.code.sf.net/p/sbcl/sbcl .
 
 
       - name: freestyle.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           export SBCL_MAKE_JOBS='-j 2'
           export SBCL_MAKE_PARALLEL=2
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv sbcl.tar.gz artifacts/
 
@@ -57,7 +57,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount curl
@@ -71,13 +71,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: freestyle.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           if ! [ -f "${WORKSPACE}/install//share/common-lisp/quicklisp/setup.lisp" ] ; then
             # Download Quicklisp installer
             curl -O https://beta.quicklisp.org/quicklisp.lisp
@@ -114,7 +114,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv quicklisp-current.tar.gz artifacts/
 
@@ -130,7 +130,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar make
@@ -139,7 +139,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
 
 
@@ -155,13 +155,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: freestyle.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p "${WORKSPACE}/install/"/etc
           mkdir -p "${WORKSPACE}/install/"/bin
 
@@ -198,7 +198,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-launch-master.tar.gz artifacts/
 
@@ -214,7 +214,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -223,7 +223,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://github.com/scymtym/architecture.service-provider.git .
 
 
@@ -244,13 +244,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -269,7 +269,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -282,7 +282,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-architecture.service-provider-master.tar.gz artifacts/
 
@@ -298,7 +298,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -307,7 +307,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://github.com/scymtym/architecture.builder-protocol.git .
 
 
@@ -328,13 +328,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -353,7 +353,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -366,7 +366,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-architecture.builder-protocol-master.tar.gz artifacts/
 
@@ -382,7 +382,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -391,7 +391,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b future https://github.com/scymtym/model.transform.trace.git .
 
 
@@ -412,13 +412,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -437,7 +437,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -450,7 +450,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-model.transform.trace-future.tar.gz artifacts/
 
@@ -466,7 +466,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -475,7 +475,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b future https://github.com/scymtym/text.source-location.git .
 
 
@@ -511,13 +511,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -536,7 +536,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -549,7 +549,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-text.source-location-future.tar.gz artifacts/
 
@@ -565,7 +565,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -574,7 +574,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://github.com/scymtym/configuration.options.git .
 
 
@@ -610,13 +610,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -635,7 +635,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -648,7 +648,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-configuration.options-master.tar.gz artifacts/
 
@@ -664,7 +664,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -673,7 +673,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://github.com/scymtym/parser.ini.git .
 
 
@@ -699,13 +699,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -724,7 +724,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -737,7 +737,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-parser.ini-master.tar.gz artifacts/
 
@@ -753,7 +753,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -762,7 +762,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b future https://github.com/scymtym/language.yaml.git .
 
 
@@ -788,13 +788,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -813,7 +813,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -826,7 +826,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv cl-language.yaml-future.tar.gz artifacts/
 
@@ -842,7 +842,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -851,7 +851,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://code.cor-lab.de/git/rosetta.git.cl .
 
 
@@ -882,13 +882,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -907,7 +907,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -920,7 +920,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv rosetta-cl-master.tar.gz artifacts/
 
@@ -936,7 +936,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount git tar
@@ -945,7 +945,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://code.cor-lab.de/git/rosetta.git.project-cl .
 
 
@@ -981,13 +981,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Set up environment
           export "ASDF_OUTPUT_TRANSLATIONS=/:${WORKSPACE}/fasl-cache/"
 
@@ -1006,7 +1006,7 @@ jobs:
 
       - name: common-lisp-source.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar \
@@ -1019,7 +1019,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv rosetta-project-cl-master.tar.gz artifacts/
 
@@ -1035,7 +1035,7 @@ jobs:
     steps:
       - name: install-platform-dependencies
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
                 sloccount tar git file unzip unp libssl1.0.0
@@ -1044,7 +1044,7 @@ jobs:
 
       - name: git.repository
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           git clone -b master https://code.cor-lab.de/git/build-generator .
 
 
@@ -1110,13 +1110,13 @@ jobs:
           path: upstream
       - name: extract-upstream-artiacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           cd upstream
           find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-executable.shell
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Get precise version from git and write into version-string.sexp
           tag='release-*'
           git describe --long --dirty=-dirty --tags --match "${tag}"                              \
@@ -1162,7 +1162,7 @@ jobs:
 
       - name: common-lisp-executable.archive-source-code
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           # Package source code
           temp=$(mktemp -u).tar.gz
           tar                                                                       \
@@ -1179,7 +1179,7 @@ jobs:
 
       - name: gather-artifacts
         run: |
-          export WORKSPACE=.
+          export WORKSPACE=$(pwd)
           mkdir -p artifacts
           mv build-generator-master.tar.gz, build-generator-master-install.tar.gz, install/bin/build-generator artifacts/
 
