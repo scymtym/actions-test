@@ -117,7 +117,7 @@ jobs:
 
 
 
-  cl-architecture.service-provider_master:
+  cl-architecture_service-provider_master:
     runs-on: ubuntu-latest
     needs: [cl-launch_master,quicklisp_current]
     steps:
@@ -153,7 +153,7 @@ jobs:
 
 
 
-  cl-architecture.builder-protocol_master:
+  cl-architecture_builder-protocol_master:
     runs-on: ubuntu-latest
     needs: [cl-launch_master,quicklisp_current]
     steps:
@@ -189,7 +189,7 @@ jobs:
 
 
 
-  cl-model.transform.trace_future:
+  cl-model_transform_trace_future:
     runs-on: ubuntu-latest
     needs: [cl-launch_master,quicklisp_current]
     steps:
@@ -225,9 +225,9 @@ jobs:
 
 
 
-  cl-text.source-location_future:
+  cl-text_source-location_future:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.service-provider_master,cl-architecture.builder-protocol_master,cl-model.transform.trace_future]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-architecture_builder-protocol_master,cl-model_transform_trace_future]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -261,9 +261,9 @@ jobs:
 
 
 
-  cl-configuration.options_master:
+  cl-configuration_options_master:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.service-provider_master,cl-parser.ini_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-parser_ini_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -297,9 +297,9 @@ jobs:
 
 
 
-  cl-parser.ini_master:
+  cl-parser_ini_master:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.builder-protocol_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -333,9 +333,9 @@ jobs:
 
 
 
-  cl-language.yaml_future:
+  cl-language_yaml_future:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.builder-protocol_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -371,7 +371,7 @@ jobs:
 
   rosetta-cl_master:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.service-provider_master,cl-architecture.builder-protocol_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_service-provider_master,cl-architecture_builder-protocol_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -407,7 +407,7 @@ jobs:
 
   rosetta-project-cl_master:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-architecture.builder-protocol_master,rosetta-cl_master]
+    needs: [cl-launch_master,quicklisp_current,cl-architecture_builder-protocol_master,rosetta-cl_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
@@ -443,7 +443,7 @@ jobs:
 
   build-generator_master:
     runs-on: ubuntu-latest
-    needs: [cl-launch_master,quicklisp_current,cl-configuration.options_master,cl-language.yaml_future,cl-text.source-location_future,rosetta-cl_master,rosetta-project-cl_master]
+    needs: [cl-launch_master,quicklisp_current,cl-configuration_options_master,cl-language_yaml_future,cl-text_source-location_future,rosetta-cl_master,rosetta-project-cl_master]
     steps:
       - name: git.repository
         uses: actions/checkout@v2
