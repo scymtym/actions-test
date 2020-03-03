@@ -21,6 +21,8 @@ jobs:
 
       - name: freestyle.shell
         run: |
+          export SBCL_MAKE_JOBS='-j 2'
+          export SBCL_MAKE_PARALLEL=2
 
           sh make.sh \
             --xc-host="sbcl --no-sysinit --no-userinit" \
