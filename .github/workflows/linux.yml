@@ -58,6 +58,17 @@ jobs:
 
 
 
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: freestyle.shell
         run: |
           if ! [ -f "${WORKSPACE}/install//share/common-lisp/quicklisp/setup.lisp" ] ; then
@@ -122,6 +133,23 @@ jobs:
         run: |
           git clone -b master https://gitlab.common-lisp.net/xcvb/cl-launch.git .
 
+
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: freestyle.shell
         run: |
@@ -188,6 +216,29 @@ jobs:
           git clone -b master https://github.com/scymtym/architecture.service-provider.git .
 
 
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -246,6 +297,29 @@ jobs:
         run: |
           git clone -b master https://github.com/scymtym/architecture.builder-protocol.git .
 
+
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
@@ -306,6 +380,29 @@ jobs:
           git clone -b future https://github.com/scymtym/model.transform.trace.git .
 
 
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -364,6 +461,47 @@ jobs:
         run: |
           git clone -b future https://github.com/scymtym/text.source-location.git .
 
+
+      - name: download-from-cl-model.transform.trace@future
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-model.transform.trace@future
+                            path: upstream-dir
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-cl-architecture.service-provider@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.service-provider@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
@@ -424,6 +562,47 @@ jobs:
           git clone -b master https://github.com/scymtym/configuration.options.git .
 
 
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-cl-parser.ini@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-parser.ini@master
+                            path: upstream-dir
+      - name: download-from-cl-architecture.service-provider@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.service-provider@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -482,6 +661,35 @@ jobs:
         run: |
           git clone -b master https://github.com/scymtym/parser.ini.git .
 
+
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
@@ -542,6 +750,35 @@ jobs:
           git clone -b future https://github.com/scymtym/language.yaml.git .
 
 
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -600,6 +837,41 @@ jobs:
         run: |
           git clone -b master https://code.cor-lab.de/git/rosetta.git.cl .
 
+
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-cl-architecture.service-provider@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.service-provider@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-source.shell
         run: |
@@ -660,6 +932,47 @@ jobs:
           git clone -b master https://code.cor-lab.de/git/rosetta.git.project-cl .
 
 
+      - name: download-from-cl-architecture.service-provider@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.service-provider@master
+                            path: upstream-dir
+      - name: download-from-rosetta-cl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: rosetta-cl@master
+                            path: upstream-dir
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: common-lisp-source.shell
         run: |
           # Set up environment
@@ -718,6 +1031,83 @@ jobs:
         run: |
           git clone -b master https://code.cor-lab.de/git/build-generator .
 
+
+      - name: download-from-rosetta-project-cl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: rosetta-project-cl@master
+                            path: upstream-dir
+      - name: download-from-rosetta-cl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: rosetta-cl@master
+                            path: upstream-dir
+      - name: download-from-cl-model.transform.trace@future
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-model.transform.trace@future
+                            path: upstream-dir
+      - name: download-from-cl-text.source-location@future
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-text.source-location@future
+                            path: upstream-dir
+      - name: download-from-cl-language.yaml@future
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-language.yaml@future
+                            path: upstream-dir
+      - name: download-from-cl-architecture.builder-protocol@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.builder-protocol@master
+                            path: upstream-dir
+      - name: download-from-cl-parser.ini@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-parser.ini@master
+                            path: upstream-dir
+      - name: download-from-cl-architecture.service-provider@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-architecture.service-provider@master
+                            path: upstream-dir
+      - name: download-from-cl-configuration.options@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-configuration.options@master
+                            path: upstream-dir
+      - name: download-from-sbcl@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: sbcl@master
+                            path: upstream-dir
+      - name: download-from-quicklisp@current
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: quicklisp@current
+                            path: upstream-dir
+      - name: download-from-cl-launch@master
+        uses: actions/download-artifact@v1
+        with:
+        
+                            name: cl-launch@master
+                            path: upstream-dir
+      - name: extract-upstream-artiacts
+        run: |
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
 
       - name: common-lisp-executable.shell
         run: |
