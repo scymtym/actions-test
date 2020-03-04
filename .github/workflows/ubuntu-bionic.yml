@@ -1193,7 +1193,8 @@ jobs:
           # No tests
 
           # Package
-          install -D praat ${WORKSPACE}/install/bin
+          install -D praat install/bin/praat
+          tar -czf "praat-current.tar.gz" install
 
 
 
