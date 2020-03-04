@@ -12,7 +12,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libv4l-dev git make pkg-config libtool autoconf-archive autoconf
+                libv4l-dev sloccount git g++ make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -22,17 +23,68 @@ jobs:
           git clone -b master https://github.com/FFmpeg/FFmpeg.git .
 
 
+      - name: download-from-libass@current
+        uses: actions/download-artifact@v1
+        with:
+          name: libass@current
+          path: upstream
+      - name: download-from-fdk-aac@current
+        uses: actions/download-artifact@v1
+        with:
+          name: fdk-aac@current
+          path: upstream
+      - name: download-from-vidstab@master
+        uses: actions/download-artifact@v1
+        with:
+          name: vidstab@master
+          path: upstream
+      - name: download-from-libvpx@current
+        uses: actions/download-artifact@v1
+        with:
+          name: libvpx@current
+          path: upstream
+      - name: download-from-xvid@current
+        uses: actions/download-artifact@v1
+        with:
+          name: xvid@current
+          path: upstream
+      - name: download-from-lame@current
+        uses: actions/download-artifact@v1
+        with:
+          name: lame@current
+          path: upstream
+      - name: download-from-libx265@stable
+        uses: actions/download-artifact@v1
+        with:
+          name: libx265@stable
+          path: upstream
+      - name: download-from-nasm@current
+        uses: actions/download-artifact@v1
+        with:
+          name: nasm@current
+          path: upstream
+      - name: download-from-libx264@stable
+        uses: actions/download-artifact@v1
+        with:
+          name: libx264@stable
+          path: upstream
+      - name: extract-upstream-artiacts
+        run: |
+          export WORKSPACE=$(pwd)
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
-          export CFLAGS="-I/tmp/ffmpeg/include -march=core2 -O2     ${CFLAGS}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
+          export CFLAGS="-I${WORKSPACE}/install//include -march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -59,18 +111,62 @@ jobs:
             --disable-static \
             --disable-runtime-cpudetect \
              --cpu=core2 \
-           --prefix="/tmp/ffmpeg"
+           --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "ffmpeg-master.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v ffmpeg-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: ffmpeg@master
+          path: artifacts
 
   nasm_current:
     runs-on: ubuntu-16.04
@@ -80,8 +176,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -109,13 +205,13 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -123,18 +219,62 @@ jobs:
 
           # Configure
           ./configure \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "nasm-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v nasm-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: nasm@current
+          path: artifacts
 
   libx264_stable:
     runs-on: ubuntu-16.04
@@ -145,7 +285,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                git make pkg-config libtool autoconf-archive autoconf
+                sloccount git g++ make pkg-config libtool autoconf-archive  \
+                autoconf
 
 
 
@@ -155,17 +296,28 @@ jobs:
           git clone -b stable https://code.videolan.org/videolan/x264.git .
 
 
+      - name: download-from-nasm@current
+        uses: actions/download-artifact@v1
+        with:
+          name: nasm@current
+          path: upstream
+      - name: extract-upstream-artiacts
+        run: |
+          export WORKSPACE=$(pwd)
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -174,18 +326,62 @@ jobs:
           # Configure
           ./configure \
             --enable-shared \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "libx264-stable.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v libx264-stable.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: libx264@stable
+          path: artifacts
 
   libx265_stable:
     runs-on: ubuntu-16.04
@@ -196,7 +392,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget
+                sloccount gzip bzip2 tar unzip unp wget
 
 
 
@@ -220,29 +416,48 @@ jobs:
           find "${temp}/" -mindepth 1 -maxdepth 1 -exec mv {} . \;
           rm -rf "${temp}"
 
+      - name: download-from-nasm@current
+        uses: actions/download-artifact@v1
+        with:
+          name: nasm@current
+          path: upstream
+      - name: extract-upstream-artiacts
+        run: |
+          export WORKSPACE=$(pwd)
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: freestyle.shell
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
-
-
-          # no install command
 
 
           cd build/linux
-          cmake -DENABLE_SHARED:bool=on -DCMAKE_INSTALL_PREFIX=/tmp/ffmpeg ../../source
+          cmake -DENABLE_SHARED:bool=on -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/install/ ../../source
           make -j2
           make install
 
 
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v build/*.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: libx265@stable
+          path: artifacts
 
   lame_current:
     runs-on: ubuntu-16.04
@@ -252,8 +467,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -281,13 +496,13 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -297,18 +512,62 @@ jobs:
           ./configure \
             --enable-nasm \
             --enable-static=no \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "lame-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v lame-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: lame@current
+          path: artifacts
 
   xvid_current:
     runs-on: ubuntu-16.04
@@ -318,8 +577,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -346,19 +605,19 @@ jobs:
       - name: pre-build-hook/unix
         run: |
           export WORKSPACE=$(pwd)
-          rm -f "/tmp/ffmpeg/lib/libxvidcore".*
+          rm -f "${WORKSPACE}/install//lib/libxvidcore".*
 
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -366,18 +625,62 @@ jobs:
 
           # Configure
           ./configure \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "xvid-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v xvid-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: xvid@current
+          path: artifacts
 
   libvpx_current:
     runs-on: ubuntu-16.04
@@ -388,8 +691,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -413,17 +716,28 @@ jobs:
           find "${temp}/" -mindepth 1 -maxdepth 1 -exec mv {} . \;
           rm -rf "${temp}"
 
+      - name: download-from-nasm@current
+        uses: actions/download-artifact@v1
+        with:
+          name: nasm@current
+          path: upstream
+      - name: extract-upstream-artiacts
+        run: |
+          export WORKSPACE=$(pwd)
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -435,18 +749,62 @@ jobs:
             --enable-shared \
             --disable-static \
             --disable-examples \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "libvpx-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v libvpx-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: libvpx@current
+          path: artifacts
 
   vidstab_master:
     runs-on: ubuntu-16.04
@@ -456,7 +814,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget g++ make cmake
+                sloccount gzip bzip2 tar unzip unp wget g++ make cmake
 
 
 
@@ -490,13 +848,13 @@ jobs:
 
 
           # Set environment variables
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L/vidstab/lib -Wl,-rpath,/vidstab/lib ${LDFLAGS}"
 
 
           # Find upstream CMake projects
@@ -506,24 +864,63 @@ jobs:
            cmake  \
             -D CMAKE_CXX_FLAGS="${CXXFLAGS}" \
             -D CMAKE_C_FLAGS="${CFLAGS}" \
-            -D CMAKE_SKIP_BUILD_RPATH=FALSE \
-            -D CMAKE_BUILD_WITH_INSTALL_RPATH=FALSE \
-            -D CMAKE_INSTALL_RPATH="/tmp/ffmpeg/lib" \
-            -D CMAKE_INSTALL_LIBDIR=lib \
-            -D CMAKE_INSTALL_PREFIX="/tmp/ffmpeg" \
-            -D CMAKE_INSTALL_PREFIX="/tmp/ffmpeg" \
+            -D CMAKE_INSTALL_PREFIX="/vidstab" \
             -D CMAKE_BUILD_TYPE=RelWithDebInfo \
            ..
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q test  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  test  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "vidstab-master.tar.gz" install
+          )
 
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v vidstab-master.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: vidstab@master
+          path: artifacts
 
   fdk-aac_current:
     runs-on: ubuntu-16.04
@@ -533,8 +930,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -562,13 +959,13 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -576,18 +973,62 @@ jobs:
 
           # Configure
           ./configure \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "fdk-aac-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v fdk-aac-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: fdk-aac@current
+          path: artifacts
 
   libass_current:
     runs-on: ubuntu-16.04
@@ -597,8 +1038,9 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libfribidi-dev libfreetype6-dev libfontconfig1-dev gzip bzip2 tar  \
-                unzip unp wget make pkg-config libtool autoconf-archive autoconf
+                libfribidi-dev libfreetype6-dev libfontconfig1-dev sloccount gzip  \
+                bzip2 tar unzip unp wget g++ make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -626,13 +1068,13 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Bootstrap
@@ -640,18 +1082,62 @@ jobs:
 
           # Configure
           ./configure \
-            --prefix="/tmp/ffmpeg"
+            --prefix="${WORKSPACE}/install/"
 
 
 
           # Build
           make -j2
 
-          # Install
-          make -j2  install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q check  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  check  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          DESTDIR="${WORKSPACE}/install" \
+            make -j2  install
+
+          (
+            cd "${WORKSPACE}"
+            tar -czf "libass-current.tar.gz" install
+          )
 
 
 
+
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v libass-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: libass@current
+          path: artifacts
 
   praat_current:
     runs-on: ubuntu-16.04
@@ -661,8 +1147,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libgtk2.0-dev libasound2-dev libpulse-dev gzip bzip2 tar unzip  \
-                unp wget make
+                libgtk2.0-dev libasound2-dev libpulse-dev sloccount gzip bzip2  \
+                tar unzip unp wget make
 
 
 
@@ -689,13 +1175,13 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           sed "/^CFLAGS/s|-O3 -g1 -pthread$|-pthread $CFLAGS|" makefiles/makefile.defs.linux.pulse > makefile.defs
@@ -703,13 +1189,50 @@ jobs:
           # Build
           make -j2
 
-          # Install
-          install -D praat /tmp/ffmpeg/bin
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q test  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  test  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          install -D praat ${WORKSPACE}/install/bin
 
 
 
 
 
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v praat-current.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: praat@current
+          path: artifacts
 
   mediainfo_current:
     runs-on: ubuntu-16.04
@@ -719,7 +1242,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                make g++ gzip bzip2 tar unzip unp wget
+                make g++ sloccount gzip bzip2 tar unzip unp wget
 
 
 
@@ -747,23 +1270,31 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
 
-          # no install command
-
-
-          ./CLI_Compile.sh --prefix=/tmp/ffmpeg
+          ./CLI_Compile.sh --prefix=${WORKSPACE}/install/
           cd MediaInfo/Project/GNU/CLI && make install
 
 
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v build/*.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: mediainfo@current
+          path: artifacts
 
   mpv-player_master:
     runs-on: ubuntu-16.04
@@ -774,7 +1305,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                python gcc git
+                python gcc sloccount git
 
 
 
@@ -784,29 +1315,93 @@ jobs:
           git clone -b master https://github.com/mpv-player/mpv.git .
 
 
+      - name: download-from-fdk-aac@current
+        uses: actions/download-artifact@v1
+        with:
+          name: fdk-aac@current
+          path: upstream
+      - name: download-from-vidstab@master
+        uses: actions/download-artifact@v1
+        with:
+          name: vidstab@master
+          path: upstream
+      - name: download-from-libvpx@current
+        uses: actions/download-artifact@v1
+        with:
+          name: libvpx@current
+          path: upstream
+      - name: download-from-xvid@current
+        uses: actions/download-artifact@v1
+        with:
+          name: xvid@current
+          path: upstream
+      - name: download-from-lame@current
+        uses: actions/download-artifact@v1
+        with:
+          name: lame@current
+          path: upstream
+      - name: download-from-libx265@stable
+        uses: actions/download-artifact@v1
+        with:
+          name: libx265@stable
+          path: upstream
+      - name: download-from-nasm@current
+        uses: actions/download-artifact@v1
+        with:
+          name: nasm@current
+          path: upstream
+      - name: download-from-libx264@stable
+        uses: actions/download-artifact@v1
+        with:
+          name: libx264@stable
+          path: upstream
+      - name: download-from-ffmpeg@master
+        uses: actions/download-artifact@v1
+        with:
+          name: ffmpeg@master
+          path: upstream
+      - name: download-from-libass@current
+        uses: actions/download-artifact@v1
+        with:
+          name: libass@current
+          path: upstream
+      - name: extract-upstream-artiacts
+        run: |
+          export WORKSPACE=$(pwd)
+          cd upstream
+          find . -name '*.tar.gz' -exec tar -xzf '{}' \;
+
       - name: freestyle.shell
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
-
-
-          # no install command
 
 
           ./bootstrap.py
-          ./waf configure --enable-libmpv-shared --prefix=/tmp/ffmpeg
+          ./waf configure --enable-libmpv-shared --prefix=${WORKSPACE}/install/
           ./waf build
           ./waf install
 
 
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v build/*.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: mpv-player@master
+          path: artifacts
 
   fktool_trunk:
     runs-on: ubuntu-16.04
@@ -816,7 +1411,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                subversion make
+                sloccount subversion make
 
 
 
@@ -828,23 +1423,62 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="/tmp/ffmpeg/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/tmp/ffmpeg:${CMAKE_PREFIX_PATH}"
-          export PATH="/tmp/ffmpeg/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L/tmp/ffmpeg/lib -Wl,-rpath,/tmp/ffmpeg/lib ${LDFLAGS}"
+          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
           # Build
           # Nothing to build
 
-          # Install
-          make -j2  prefix=/tmp/ffmpeg install
+          # Test
+          write_testresult() {
+            date=$(date -Iseconds)
+            cat > make_test_result.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <testsuites tests='1' failures='0' disabled='0' errors='0' timestamp='${date}' time='1' name='make_test'>
+            <testsuite name='make_test' tests='1' failures='0' disabled='0' errors='0' time='1'>
+              <testcase name='make_test' status='run' time='0'></testcase>
+            </testsuite>
+          </testsuites>
+          EOF
+            if [ $1 -gt 0 ] ; then
+              sed -i -e "s/failures='0'/failures='1'/g" \
+                     -e "s:></testcase>:><failure message='Tests failed'/></testcase>:g" \
+                     make_test_result.xml
+            fi
+          }
+
+          make -q test  || result=$?
+          if [ $result -ne 2 ] ; then  # Are the test targets actually available?
+            make -j2  test  || write_testresult $?
+          else
+            rm -f make_test_result.xml  # Remove old test result
+          fi
+
+
+          # Package
+          make -j2  prefix=${WORKSPACE}/install install
+
+          tar -czf "fktool-trunk.tar.gz" install
 
 
 
 
+      - name: gather-artifacts
+        run: |
+          export WORKSPACE=$(pwd)
+          mkdir -p artifacts
+          mv -v fktool-trunk.tar.gz artifacts/
+
+      - name: upload-artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: fktool@trunk
+          path: artifacts
 
   
