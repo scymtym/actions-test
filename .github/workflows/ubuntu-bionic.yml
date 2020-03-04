@@ -1247,14 +1247,6 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
-          export CFLAGS="-march=core2 -O2     ${CFLAGS}"
-          export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
-          export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
           export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
           export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
           export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
@@ -1264,25 +1256,8 @@ jobs:
           export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
 
 
-
-      - name: freestyle.shell
-        run: |
-          export WORKSPACE=$(pwd)
-          # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
-          export CFLAGS="-march=core2 -O2     ${CFLAGS}"
-          export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
-          export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
-          export CFLAGS="-march=core2 -O2     ${CFLAGS}"
-          export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
-          export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
-          export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
+          ./CLI_Compile.sh --prefix=${WORKSPACE}/install/
+          cd MediaInfo/Project/GNU/CLI && make install
 
 
 
@@ -1290,7 +1265,7 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           mkdir -p artifacts
-          mv -v build/*.tar.gz artifacts/
+          mv -v mediainfo-current.tar.gz artifacts/
 
       - name: upload-artifacts
         uses: actions/upload-artifact@v1
