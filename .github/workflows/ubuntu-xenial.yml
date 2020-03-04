@@ -12,8 +12,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libv4l-dev sloccount git make pkg-config libtool autoconf-archive  \
-                autoconf
+                libv4l-dev sloccount git g++ make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -78,9 +78,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-I${WORKSPACE}/install//include -march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -176,8 +176,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -205,9 +205,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -285,7 +285,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount git make pkg-config libtool autoconf-archive autoconf
+                sloccount git g++ make pkg-config libtool autoconf-archive  \
+                autoconf
 
 
 
@@ -310,9 +311,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -430,9 +431,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -466,8 +467,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -495,9 +496,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -576,8 +577,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -610,9 +611,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -690,8 +691,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -730,9 +731,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -847,9 +848,9 @@ jobs:
 
 
           # Set environment variables
-          export PKG_CONFIG_PATH="/vidstab/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="/vidstab:${CMAKE_PREFIX_PATH}"
-          export PATH="/vidstab/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -929,8 +930,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf
 
 
 
@@ -958,9 +959,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1037,9 +1038,9 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
-                autoconf-archive autoconf libfontconfig1-dev libfreetype6-dev  \
-                libfribidi-dev
+                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
+                libtool autoconf-archive autoconf libfontconfig1-dev  \
+                libfreetype6-dev libfribidi-dev
 
 
 
@@ -1067,9 +1068,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1174,9 +1175,9 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1247,16 +1248,16 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
           export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1268,16 +1269,16 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
           export LDFLAGS="-L${WORKSPACE}/install//lib -Wl,-rpath,${WORKSPACE}/install//lib ${LDFLAGS}"
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1376,9 +1377,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1424,9 +1425,9 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/install//bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
