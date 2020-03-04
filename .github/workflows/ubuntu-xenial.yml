@@ -1220,7 +1220,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                g++
+                sloccount gzip bzip2 tar unzip unp wget make g++
 
 
 
@@ -1307,7 +1307,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                python gcc sloccount git
+                sloccount git python gcc
 
 
 
