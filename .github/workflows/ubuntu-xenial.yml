@@ -1147,8 +1147,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libgtk2.0-dev libasound2-dev libpulse-dev sloccount gzip bzip2  \
-                tar unzip unp wget make
+                sloccount gzip bzip2 tar unzip unp wget make libpulse-dev  \
+                libasound2-dev libgtk2.0-dev g++
 
 
 
