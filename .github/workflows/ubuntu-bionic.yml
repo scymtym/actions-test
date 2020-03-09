@@ -12,8 +12,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                libv4l-dev sloccount git g++ make pkg-config libtool  \
-                autoconf-archive autoconf
+                libv4l-dev sloccount git make pkg-config libtool autoconf-archive  \
+                autoconf
 
 
 
@@ -23,48 +23,39 @@ jobs:
           git clone -b master https://github.com/FFmpeg/FFmpeg.git .
 
 
-      - name: download-from-libass@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libass@current
         with:
           name: libass@current
           path: upstream
-      - name: download-from-fdk-aac@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-fdk-aac@current
         with:
           name: fdk-aac@current
           path: upstream
-      - name: download-from-vidstab@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-vidstab@master
         with:
           name: vidstab@master
           path: upstream
-      - name: download-from-libvpx@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libvpx@current
         with:
           name: libvpx@current
           path: upstream
-      - name: download-from-xvid@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-xvid@current
         with:
           name: xvid@current
           path: upstream
-      - name: download-from-lame@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-lame@current
         with:
           name: lame@current
           path: upstream
-      - name: download-from-libx265@stable
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libx265@stable
         with:
           name: libx265@stable
           path: upstream
-      - name: download-from-nasm@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-nasm@current
         with:
           name: nasm@current
           path: upstream
-      - name: download-from-libx264@stable
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libx264@stable
         with:
           name: libx264@stable
           path: upstream
@@ -78,9 +69,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-I${WORKSPACE}/install//include -march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -116,7 +107,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -138,7 +129,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -146,7 +137,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -162,8 +153,7 @@ jobs:
           mkdir -p artifacts
           mv -v ffmpeg-master.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-ffmpeg@master
         with:
           name: ffmpeg@master
           path: artifacts
@@ -176,8 +166,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -205,9 +195,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -224,7 +214,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -246,7 +236,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -254,7 +244,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -270,8 +260,7 @@ jobs:
           mkdir -p artifacts
           mv -v nasm-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-nasm@current
         with:
           name: nasm@current
           path: artifacts
@@ -285,8 +274,7 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount git g++ make pkg-config libtool autoconf-archive  \
-                autoconf
+                sloccount git make pkg-config libtool autoconf-archive autoconf
 
 
 
@@ -296,8 +284,7 @@ jobs:
           git clone -b stable https://code.videolan.org/videolan/x264.git .
 
 
-      - name: download-from-nasm@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-nasm@current
         with:
           name: nasm@current
           path: upstream
@@ -311,9 +298,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -331,7 +318,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -353,7 +340,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -361,7 +348,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -377,8 +364,7 @@ jobs:
           mkdir -p artifacts
           mv -v libx264-stable.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-libx264@stable
         with:
           name: libx264@stable
           path: artifacts
@@ -416,8 +402,7 @@ jobs:
           find "${temp}/" -mindepth 1 -maxdepth 1 -exec mv {} . \;
           rm -rf "${temp}"
 
-      - name: download-from-nasm@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-nasm@current
         with:
           name: nasm@current
           path: upstream
@@ -431,9 +416,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -443,7 +428,7 @@ jobs:
 
           cd build/linux
           cmake -DENABLE_SHARED:bool=on -DCMAKE_INSTALL_PREFIX=${WORKSPACE}/install/ ../../source
-          make -j2
+          make -j4
           make install
 
 
@@ -453,8 +438,7 @@ jobs:
           mkdir -p artifacts
           mv -v build/*.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-libx265@stable
         with:
           name: libx265@stable
           path: artifacts
@@ -467,8 +451,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -496,9 +480,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -517,7 +501,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -539,7 +523,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -547,7 +531,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -563,8 +547,7 @@ jobs:
           mkdir -p artifacts
           mv -v lame-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-lame@current
         with:
           name: lame@current
           path: artifacts
@@ -577,8 +560,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -611,9 +594,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -630,7 +613,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -652,7 +635,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -660,7 +643,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -676,8 +659,7 @@ jobs:
           mkdir -p artifacts
           mv -v xvid-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-xvid@current
         with:
           name: xvid@current
           path: artifacts
@@ -691,8 +673,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -716,8 +698,7 @@ jobs:
           find "${temp}/" -mindepth 1 -maxdepth 1 -exec mv {} . \;
           rm -rf "${temp}"
 
-      - name: download-from-nasm@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-nasm@current
         with:
           name: nasm@current
           path: upstream
@@ -731,9 +712,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -754,7 +735,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -776,7 +757,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -784,7 +765,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -800,8 +781,7 @@ jobs:
           mkdir -p artifacts
           mv -v libvpx-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-libvpx@current
         with:
           name: libvpx@current
           path: artifacts
@@ -848,9 +828,9 @@ jobs:
 
 
           # Set environment variables
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="/vidstab/lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="/vidstab:${CMAKE_PREFIX_PATH}"
+          export PATH="/vidstab/bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -869,7 +849,7 @@ jobs:
            ..
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -891,7 +871,7 @@ jobs:
 
           make -q test  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  test  || write_testresult $?
+            make -j4  test  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -899,7 +879,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -916,8 +896,7 @@ jobs:
           mkdir -p artifacts
           mv -v vidstab-master.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-vidstab@master
         with:
           name: vidstab@master
           path: artifacts
@@ -930,8 +909,8 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf
 
 
 
@@ -959,9 +938,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -978,7 +957,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -1000,7 +979,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -1008,7 +987,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -1024,8 +1003,7 @@ jobs:
           mkdir -p artifacts
           mv -v fdk-aac-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-fdk-aac@current
         with:
           name: fdk-aac@current
           path: artifacts
@@ -1038,9 +1016,9 @@ jobs:
           export WORKSPACE=$(pwd)
           DEBIAN_FRONTEND=noninteractive sudo apt-get -qq update \
               && DEBIAN_FRONTEND=noninteractive sudo apt-get -qq --assume-yes install \
-                sloccount gzip bzip2 tar unzip unp wget g++ make pkg-config  \
-                libtool autoconf-archive autoconf libfontconfig1-dev  \
-                libfreetype6-dev libfribidi-dev
+                sloccount gzip bzip2 tar unzip unp wget make pkg-config libtool  \
+                autoconf-archive autoconf libfontconfig1-dev libfreetype6-dev  \
+                libfribidi-dev
 
 
 
@@ -1068,9 +1046,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # Environment Setup
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1087,7 +1065,7 @@ jobs:
 
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           write_testresult() {
@@ -1109,7 +1087,7 @@ jobs:
 
           make -q check  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  check  || write_testresult $?
+            make -j4  check  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
@@ -1117,7 +1095,7 @@ jobs:
 
           # Package
           DESTDIR="${WORKSPACE}/install" \
-            make -j2  install
+            make -j4  install
 
           (
             cd "${WORKSPACE}"
@@ -1133,8 +1111,7 @@ jobs:
           mkdir -p artifacts
           mv -v libass-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-libass@current
         with:
           name: libass@current
           path: artifacts
@@ -1175,9 +1152,9 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1187,7 +1164,7 @@ jobs:
           sed "/^CFLAGS/s|-O3 -g1 -pthread$|-pthread $CFLAGS|" makefiles/makefile.defs.linux.pulse > makefile.defs
 
           # Build
-          make -j2
+          make -j4
 
           # Test
           # No tests
@@ -1206,8 +1183,7 @@ jobs:
           mkdir -p artifacts
           mv -v praat-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-praat@current
         with:
           name: praat@current
           path: artifacts
@@ -1247,9 +1223,9 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1267,8 +1243,7 @@ jobs:
           mkdir -p artifacts
           mv -v mediainfo-current.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-mediainfo@current
         with:
           name: mediainfo@current
           path: artifacts
@@ -1292,53 +1267,43 @@ jobs:
           git clone -b master https://github.com/mpv-player/mpv.git .
 
 
-      - name: download-from-fdk-aac@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-fdk-aac@current
         with:
           name: fdk-aac@current
           path: upstream
-      - name: download-from-vidstab@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-vidstab@master
         with:
           name: vidstab@master
           path: upstream
-      - name: download-from-libvpx@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libvpx@current
         with:
           name: libvpx@current
           path: upstream
-      - name: download-from-xvid@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-xvid@current
         with:
           name: xvid@current
           path: upstream
-      - name: download-from-lame@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-lame@current
         with:
           name: lame@current
           path: upstream
-      - name: download-from-libx265@stable
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libx265@stable
         with:
           name: libx265@stable
           path: upstream
-      - name: download-from-nasm@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-nasm@current
         with:
           name: nasm@current
           path: upstream
-      - name: download-from-libx264@stable
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libx264@stable
         with:
           name: libx264@stable
           path: upstream
-      - name: download-from-ffmpeg@master
-        uses: actions/download-artifact@v1
+      - name: download-artifact-ffmpeg@master
         with:
           name: ffmpeg@master
           path: upstream
-      - name: download-from-libass@current
-        uses: actions/download-artifact@v1
+      - name: download-artifact-libass@current
         with:
           name: libass@current
           path: upstream
@@ -1352,9 +1317,9 @@ jobs:
         run: |
           export WORKSPACE=$(pwd)
           # setup environment (do not remove this comment!)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1374,8 +1339,7 @@ jobs:
           mkdir -p artifacts
           mv -v build/*.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-mpv-player@master
         with:
           name: mpv-player@master
           path: artifacts
@@ -1400,9 +1364,9 @@ jobs:
       - name: make.shell
         run: |
           export WORKSPACE=$(pwd)
-          export PKG_CONFIG_PATH="${WORKSPACE}/upstream/install/lib/pkgconfig:${PKG_CONFIG_PATH}"
-          export CMAKE_PREFIX_PATH="${WORKSPACE}/upstream/install:${CMAKE_PREFIX_PATH}"
-          export PATH="${WORKSPACE}/upstream/install/bin:${PATH}"
+          export PKG_CONFIG_PATH="${WORKSPACE}/install//lib/pkgconfig:${PKG_CONFIG_PATH}"
+          export CMAKE_PREFIX_PATH="${WORKSPACE}/install/:${CMAKE_PREFIX_PATH}"
+          export PATH="${WORKSPACE}/install//bin:${PATH}"
           export CFLAGS="-march=core2 -O2     ${CFLAGS}"
           export CXXFLAGS="-march=core2 -O2     ${CXXFLAGS}"
           export CPPFLAGS="-march=core2 -O2     ${CPPFLAGS}"
@@ -1432,14 +1396,14 @@ jobs:
 
           make -q test  || result=$?
           if [ $result -ne 2 ] ; then  # Are the test targets actually available?
-            make -j2  test  || write_testresult $?
+            make -j4  test  || write_testresult $?
           else
             rm -f make_test_result.xml  # Remove old test result
           fi
 
 
           # Package
-          make -j2  prefix=${WORKSPACE}/install install
+          make -j4  prefix=${WORKSPACE}/install install
 
           tar -czf "fktool-trunk.tar.gz" install
 
@@ -1452,8 +1416,7 @@ jobs:
           mkdir -p artifacts
           mv -v fktool-trunk.tar.gz artifacts/
 
-      - name: upload-artifacts
-        uses: actions/upload-artifact@v1
+      - name: upload-artifact-fktool@trunk
         with:
           name: fktool@trunk
           path: artifacts
