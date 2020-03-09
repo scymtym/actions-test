@@ -24,38 +24,47 @@ jobs:
 
 
       - name: download-artifact-libass@current
+        uses: actions/download-artifact@v1
         with:
           name: libass@current
           path: upstream
       - name: download-artifact-fdk-aac@current
+        uses: actions/download-artifact@v1
         with:
           name: fdk-aac@current
           path: upstream
       - name: download-artifact-vidstab@master
+        uses: actions/download-artifact@v1
         with:
           name: vidstab@master
           path: upstream
       - name: download-artifact-libvpx@current
+        uses: actions/download-artifact@v1
         with:
           name: libvpx@current
           path: upstream
       - name: download-artifact-xvid@current
+        uses: actions/download-artifact@v1
         with:
           name: xvid@current
           path: upstream
       - name: download-artifact-lame@current
+        uses: actions/download-artifact@v1
         with:
           name: lame@current
           path: upstream
       - name: download-artifact-libx265@stable
+        uses: actions/download-artifact@v1
         with:
           name: libx265@stable
           path: upstream
       - name: download-artifact-nasm@current
+        uses: actions/download-artifact@v1
         with:
           name: nasm@current
           path: upstream
       - name: download-artifact-libx264@stable
+        uses: actions/download-artifact@v1
         with:
           name: libx264@stable
           path: upstream
@@ -154,6 +163,7 @@ jobs:
           mv -v ffmpeg-master.tar.gz artifacts/
 
       - name: upload-artifact-ffmpeg@master
+        uses: actions/upload-artifact@v1
         with:
           name: ffmpeg@master
           path: artifacts
@@ -261,6 +271,7 @@ jobs:
           mv -v nasm-current.tar.gz artifacts/
 
       - name: upload-artifact-nasm@current
+        uses: actions/upload-artifact@v1
         with:
           name: nasm@current
           path: artifacts
@@ -285,6 +296,7 @@ jobs:
 
 
       - name: download-artifact-nasm@current
+        uses: actions/download-artifact@v1
         with:
           name: nasm@current
           path: upstream
@@ -365,6 +377,7 @@ jobs:
           mv -v libx264-stable.tar.gz artifacts/
 
       - name: upload-artifact-libx264@stable
+        uses: actions/upload-artifact@v1
         with:
           name: libx264@stable
           path: artifacts
@@ -403,6 +416,7 @@ jobs:
           rm -rf "${temp}"
 
       - name: download-artifact-nasm@current
+        uses: actions/download-artifact@v1
         with:
           name: nasm@current
           path: upstream
@@ -439,6 +453,7 @@ jobs:
           mv -v build/*.tar.gz artifacts/
 
       - name: upload-artifact-libx265@stable
+        uses: actions/upload-artifact@v1
         with:
           name: libx265@stable
           path: artifacts
@@ -548,6 +563,7 @@ jobs:
           mv -v lame-current.tar.gz artifacts/
 
       - name: upload-artifact-lame@current
+        uses: actions/upload-artifact@v1
         with:
           name: lame@current
           path: artifacts
@@ -660,6 +676,7 @@ jobs:
           mv -v xvid-current.tar.gz artifacts/
 
       - name: upload-artifact-xvid@current
+        uses: actions/upload-artifact@v1
         with:
           name: xvid@current
           path: artifacts
@@ -699,6 +716,7 @@ jobs:
           rm -rf "${temp}"
 
       - name: download-artifact-nasm@current
+        uses: actions/download-artifact@v1
         with:
           name: nasm@current
           path: upstream
@@ -782,6 +800,7 @@ jobs:
           mv -v libvpx-current.tar.gz artifacts/
 
       - name: upload-artifact-libvpx@current
+        uses: actions/upload-artifact@v1
         with:
           name: libvpx@current
           path: artifacts
@@ -897,6 +916,7 @@ jobs:
           mv -v vidstab-master.tar.gz artifacts/
 
       - name: upload-artifact-vidstab@master
+        uses: actions/upload-artifact@v1
         with:
           name: vidstab@master
           path: artifacts
@@ -1004,6 +1024,7 @@ jobs:
           mv -v fdk-aac-current.tar.gz artifacts/
 
       - name: upload-artifact-fdk-aac@current
+        uses: actions/upload-artifact@v1
         with:
           name: fdk-aac@current
           path: artifacts
@@ -1112,6 +1133,7 @@ jobs:
           mv -v libass-current.tar.gz artifacts/
 
       - name: upload-artifact-libass@current
+        uses: actions/upload-artifact@v1
         with:
           name: libass@current
           path: artifacts
@@ -1184,6 +1206,7 @@ jobs:
           mv -v praat-current.tar.gz artifacts/
 
       - name: upload-artifact-praat@current
+        uses: actions/upload-artifact@v1
         with:
           name: praat@current
           path: artifacts
@@ -1244,6 +1267,7 @@ jobs:
           mv -v mediainfo-current.tar.gz artifacts/
 
       - name: upload-artifact-mediainfo@current
+        uses: actions/upload-artifact@v1
         with:
           name: mediainfo@current
           path: artifacts
@@ -1268,42 +1292,52 @@ jobs:
 
 
       - name: download-artifact-fdk-aac@current
+        uses: actions/download-artifact@v1
         with:
           name: fdk-aac@current
           path: upstream
       - name: download-artifact-vidstab@master
+        uses: actions/download-artifact@v1
         with:
           name: vidstab@master
           path: upstream
       - name: download-artifact-libvpx@current
+        uses: actions/download-artifact@v1
         with:
           name: libvpx@current
           path: upstream
       - name: download-artifact-xvid@current
+        uses: actions/download-artifact@v1
         with:
           name: xvid@current
           path: upstream
       - name: download-artifact-lame@current
+        uses: actions/download-artifact@v1
         with:
           name: lame@current
           path: upstream
       - name: download-artifact-libx265@stable
+        uses: actions/download-artifact@v1
         with:
           name: libx265@stable
           path: upstream
       - name: download-artifact-nasm@current
+        uses: actions/download-artifact@v1
         with:
           name: nasm@current
           path: upstream
       - name: download-artifact-libx264@stable
+        uses: actions/download-artifact@v1
         with:
           name: libx264@stable
           path: upstream
       - name: download-artifact-ffmpeg@master
+        uses: actions/download-artifact@v1
         with:
           name: ffmpeg@master
           path: upstream
       - name: download-artifact-libass@current
+        uses: actions/download-artifact@v1
         with:
           name: libass@current
           path: upstream
@@ -1340,6 +1374,7 @@ jobs:
           mv -v build/*.tar.gz artifacts/
 
       - name: upload-artifact-mpv-player@master
+        uses: actions/upload-artifact@v1
         with:
           name: mpv-player@master
           path: artifacts
@@ -1417,6 +1452,7 @@ jobs:
           mv -v fktool-trunk.tar.gz artifacts/
 
       - name: upload-artifact-fktool@trunk
+        uses: actions/upload-artifact@v1
         with:
           name: fktool@trunk
           path: artifacts
